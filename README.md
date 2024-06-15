@@ -2,6 +2,7 @@
 
 ## 微信、支付宝、QQ、通联支付、拉卡拉、PayPal的支付SDK
 
+```
 -- 代码结构
     |-- crates
         |-- .github       github
@@ -16,6 +17,7 @@
     |-- .gitignore         忽略提交文件
     |-- Cargo.toml          cargo 配置文件
     |-- README.md           说明文档
+```
 
 ## 测试配置请照着.env.tpl格式创建.env文件并填写支付信息内容
 ```
