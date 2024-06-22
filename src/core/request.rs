@@ -1,5 +1,5 @@
 use crate::common::HttpMethod;
-use crate::constant::{ACCEPT, AUTHORIZATION, MCH_HOST};
+use crate::constant::{ACCEPT, AUTHORIZATION};
 use crate::pay::config::WechatV3PayConfig;
 use crate::{utils, RPayError, RPayResult};
 use derive_builder::Builder;
@@ -34,7 +34,8 @@ impl Request {
     ) -> RPayResult<T> {
         let headers = Self::build_header(&wechat_sdk, method.clone(), url, body.clone())?;
         let client = Client::new();
-        let url = format!("{}{}", MCH_HOST, url);
+        let url = format!("https://api.mch.weixin.qq.com{}", url);
+        println!("请求url: {:?}", url);
         let builder = match method {
             HttpMethod::GET => client.get(url),
             HttpMethod::POST => client.post(url),

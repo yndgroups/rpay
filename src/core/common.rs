@@ -16,3 +16,18 @@ pub enum Lang {
     #[serde(rename = "zh_TW")]
     ZhTw,
 }
+
+// 授权类型
+#[derive(Clone, Debug,Copy, Serialize, Deserialize)]
+pub enum GrantType {
+    #[serde(rename  = "authorization_code")]
+    AuthorizationCode,
+}
+
+// 微信登录类型
+#[derive(Clone, Debug,Copy, Serialize, Deserialize)]
+pub enum LoginType {
+    Web,
+    MiniProgram,
+    App,
+}

@@ -1,6 +1,6 @@
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
-use crate::{constant::V3_PAY_TRANSACTIONS_JS_API, core::{common::RPayResponse, request::Request}, model::{Amount, Detail, Payer, SceneInfo, SettleInfo, SignData}, RPayResult};
+use crate::{core::{common::RPayResponse, request::Request}, model::{Amount, Detail, Payer, SceneInfo, SettleInfo, SignData}, RPayResult};
 use super::config::WechatV3PayConfig;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
@@ -64,7 +64,7 @@ impl JsApiPay {
         self.mch_id = wechat_sdk.mch_id.clone();
         self.notify_url = wechat_sdk.notify_url.clone().unwrap_or_default();
         let json_body = serde_json::to_string(self).unwrap();
-        Request::build_pay_request::<JsapiResponse>(wechat_sdk,crate::common::HttpMethod::POST, V3_PAY_TRANSACTIONS_JS_API, json_body).await
+        Request::build_pay_request::<JsapiResponse>(wechat_sdk,crate::common::HttpMethod::POST, "/v3/pay/transactions/jsapi", json_body).await
     }
 }
 

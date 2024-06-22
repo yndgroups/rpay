@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use serde::{ Deserialize, Serialize};
 use serde_json::{json, Value};
 
-use crate::{constant::NEW_TMPL_HOST, core::request::RequestBuilder, RPayResult};
+use crate::{core::request::RequestBuilder, RPayResult};
 
 
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
@@ -19,7 +19,7 @@ impl Templates {
             "priTmplId": template_id
         });
         println!("body = {}", body);
-        let url = format!("{}/deltemplate?access_token={}", NEW_TMPL_HOST, self.access_token);
+        let url = format!("https://api.weixin.qq.com/wxaapi/newtmpl/deltemplate?access_token={}", self.access_token);
         let resp = RequestBuilder::default()
             .url(url)
             .body(body.to_string())
@@ -29,7 +29,7 @@ impl Templates {
 
     // 获取类目
     pub async fn get_category(&self) -> RPayResult<TemplatesResponse<Vec<CategoryResponse>>> {
-        let url = format!("{}/getcategory?access_token={}", NEW_TMPL_HOST, self.access_token);
+        let url = format!("https://api.weixin.qq.com/wxaapi/newtmpl/getcategory?access_token={}", self.access_token);
         let resp = RequestBuilder::default()
             .url(url)
             .build()?.send().await?;
@@ -41,7 +41,7 @@ impl Templates {
     // access_token	string	是	接口调用凭证，该参数为 URL 参数，非 Body 参数。使用access_token或者authorizer_access_token
     // tid	string	是	模板标题 id，可通过接口获取
     pub async fn get_pub_template_keywords(&self, tid: String) -> RPayResult<TemplatesResponse<Vec<KeywordsResponse>>> {
-        let url = format!("{}/getpubtemplatekeywords?access_token={}&tid={}", NEW_TMPL_HOST, self.access_token, tid);
+        let url = format!("https://api.weixin.qq.com/wxaapi/newtmpl/getpubtemplatekeywords?access_token={}&tid={}", self.access_token, tid);
         let resp = RequestBuilder::default()
             .url(url)
             .build()?.send().await?;

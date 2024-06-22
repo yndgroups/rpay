@@ -1,8 +1,7 @@
 use derive_builder::Builder;
-use serde::{ Deserialize, Serialize};
+use serde::{Deserialize, Serialize};
 
-use crate::{constant::CGI_BIN_TOKEN_WECHAT_HOST, core::request::RequestBuilder, RPayResult};
-
+use crate::{core::request::RequestBuilder, RPayResult};
 
 /// accessToken 登录授权
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
@@ -33,10 +32,14 @@ impl AccessToken {
     /// 如果请求失败，会返回错误信息。
     pub async fn request(&mut self) -> RPayResult<Response> {
         // 根据appid和secret构造获取访问令牌的URL
-        let url = format!("{}?grant_type=client_credential&appid={}&secret={}", CGI_BIN_TOKEN_WECHAT_HOST, self.app_id, self.secret);
+        let url = format!("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={}&secret={}", self.app_id, self.secret);
         // 构建请求，发送到微信服务器，并等待响应
-        let resp = RequestBuilder::default().url(url).build()?.send::<Response>().await?;
-         // 返回响应结果
+        let resp = RequestBuilder::default()
+            .url(url)
+            .build()?
+            .send::<Response>()
+            .await?;
+        // 返回响应结果
         Ok(resp)
     }
 }
@@ -60,5 +63,5 @@ pub struct Response {
     /// 89507	1小时内该IP被管理员拒绝调用一次，1小时内不可再使用该IP调用
     pub errcode: Option<i64>,
     /// 错误信息
-    errmsg: Option<String>
+    errmsg: Option<String>,
 }

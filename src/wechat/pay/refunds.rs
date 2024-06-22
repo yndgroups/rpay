@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    constant::V3_REFUND_DOMESTIC_REFUNDS, core::{common::RPayResponse, request::Request}, RPayResult
+    core::{common::RPayResponse, request::Request}, RPayResult
 };
 use super::config::WechatV3PayConfig;
 
@@ -43,7 +43,7 @@ impl Refunds {
     pub async fn pay(&mut self, wechat_sdk: WechatV3PayConfig) -> RPayResult<RefundResponse> {
         self.notify_url = wechat_sdk.refund_notify_url.clone();
         let json_body = serde_json::to_string(self).unwrap();
-        Request::build_pay_request::<RefundResponse>(wechat_sdk,crate::common::HttpMethod::POST, V3_REFUND_DOMESTIC_REFUNDS, json_body).await
+        Request::build_pay_request::<RefundResponse>(wechat_sdk,crate::common::HttpMethod::POST, "/v3/refund/domestic/refunds", json_body).await
     }
 }
 

@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
 use crate::common::HttpMethod;
-use crate::constant::{ACCEPT, AUTHORIZATION, MCH_HOST};
+use crate::constant::{ACCEPT, AUTHORIZATION};
 use crate::pay::config::WechatV3PayConfig;
 use crate::{utils, RPayError, RPayResult};
 use rsa::pkcs8::DecodePrivateKey;
@@ -83,7 +83,7 @@ pub fn sha256_sign(private_key: String, content: String) -> Result<String, RPayE
 pub async fn build_pay_request<T: DeserializeOwned>(wechat_sdk: WechatV3PayConfig, method: HttpMethod, url: &str, body: String) -> RPayResult<T> {
         let headers = build_header(&wechat_sdk,method.clone(), url, body.clone())?;
         let client = Client::new();
-        let url = format!("{}{}", MCH_HOST, url);
+        let url = format!("https://api.mch.weixin.qq.com{}", url);
         let builder = match method {
             HttpMethod::GET => client.get(url),
             HttpMethod::POST => client.post(url),
