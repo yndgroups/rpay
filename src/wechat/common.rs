@@ -16,6 +16,12 @@ pub enum HttpMethod {
     PATCH,
 }
 
+impl Default for HttpMethod {
+    fn default() -> Self {
+        HttpMethod::GET
+    }
+}
+
 impl Display for HttpMethod {
     fn fmt(&self, fmt: &mut Formatter<'_>) -> std::fmt::Result {
         match self {

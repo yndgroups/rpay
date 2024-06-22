@@ -1,11 +1,18 @@
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use dotenvy::dotenv;
     use rpay::{
-        model::{AmountBuilder, PayType, PayerBuilder}, pay::{
+        auth::access_token::AccessTokenBuilder, message::{DataItem, MessageBuilder}, model::{AmountBuilder, PayType, PayerBuilder}, pay::{
             app::AppPayBuilder, config::{WechatV3PayConfig, WechatV3PayConfigBuilder}, h5::H5PayBuilder, jsapi::JsApiPayBuilder, native::NativePayBuilder, parse_encrypt::ParseEncryptBuilder, pay_info::PayInfoBuilder
         }, RPayResult
     };
+
+    fn get_oepn_id() -> String {
+        let openid = std::env::var("WECHAT_OPEN_ID").expect("WECHAT_OPEN_ID not found");
+        return openid;
+    }
     
     // sdk公共参数
     fn get_sdk() -> RPayResult<WechatV3PayConfig> {
@@ -29,7 +36,7 @@ mod tests {
         .build()?;
         Ok(sdk)
     }
-
+   
     /// 测试解密
     #[tokio::test]
     async fn test_pay_info() -> RPayResult<()> {
@@ -38,7 +45,7 @@ mod tests {
             .prepay_id("wx14154500982430c7bee6ccd124b7400000") // 这里注意动态获取的参数
             .pay_type(PayType::Jsapi)
             .build()?.signature(sdk).await?;
-        println!("{:?}", resp);
+        println!("resp => {:?}", resp);
         Ok(())
     }
 
@@ -66,7 +73,7 @@ mod tests {
             .description("测试支付")
             .payer(
                 PayerBuilder::default()
-                    .openid("o9_RS4y7OD5lfPrmqw2157U8WdtQ".to_string())
+                    .openid(get_oepn_id())
                     .build()?,
             )
             .out_trade_no("wx1123123232432341223")

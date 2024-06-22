@@ -1,7 +1,7 @@
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
-use crate::{constant::V3_PAY_TRANSACTIONS_NATIVE, core::common::RPayResponse, model::{Amount, Detail, Payer, SceneInfo, SettleInfo, SignData}, utils, RPayResult};
+use crate::{constant::V3_PAY_TRANSACTIONS_NATIVE, core::{common::RPayResponse, request::Request}, model::{Amount, Detail, Payer, SceneInfo, SettleInfo, SignData}, RPayResult};
 
 use super::config::WechatV3PayConfig;
 
@@ -65,7 +65,7 @@ impl NativePay {
         self.mch_id = wechat_sdk.mch_id.clone();
         self.notify_url = wechat_sdk.notify_url.clone().unwrap_or_default();
         let json_body = serde_json::to_string(self).unwrap();
-        utils::build_request::<NativeResponse>(wechat_sdk,crate::common::HttpMethod::POST, V3_PAY_TRANSACTIONS_NATIVE, json_body).await
+        Request::build_pay_request::<NativeResponse>(wechat_sdk,crate::common::HttpMethod::POST, V3_PAY_TRANSACTIONS_NATIVE, json_body).await
     }
 }
 

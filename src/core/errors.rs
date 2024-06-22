@@ -2,7 +2,9 @@ use std::{num::ParseIntError, string::FromUtf8Error};
 
 use base64::DecodeError;
 
-use crate::{model::{AmountBuilderError, PayerBuilderError}, pay::{app, config::WechatV3PayConfigBuilderError, h5, jsapi::JsApiPayBuilderError, native, parse_encrypt::ParseEncryptBuilderError, pay_info}};
+use crate::{auth::access_token::AccessTokenBuilderError, message::MessageBuilderError, model::{AmountBuilderError, PayerBuilderError}, pay::{app, config::WechatV3PayConfigBuilderError, h5, jsapi::JsApiPayBuilderError, native, parse_encrypt::ParseEncryptBuilderError, pay_info}, template::TemplatesBuilderError};
+
+use super::request::RequestBuilderError;
 
 #[derive(Debug, thiserror::Error)]
 pub enum RPayError {
@@ -72,5 +74,19 @@ pub enum RPayError {
 
     #[error("支付签名参数异常: {0}")]
     ParseEncryptBuilderError(#[from] ParseEncryptBuilderError),
+
+    #[error("获取access_token异常: {0}")]
+    AccessTokenBuilderError(#[from] AccessTokenBuilderError),
+
+    #[error("请求异常: {0}")]
+    RequestBuilderError(#[from] RequestBuilderError),
+
+    #[error("消息发送异常: {0}")]
+    MessageBuilderError(#[from] MessageBuilderError),
+
+    #[error("模版请求异常: {0}")]
+    TemplatesBuilderError(#[from] TemplatesBuilderError),
+
+    
     
 }

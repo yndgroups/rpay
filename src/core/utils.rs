@@ -1,14 +1,14 @@
 use base64::engine::general_purpose;
 use base64::{DecodeError, Engine};
+use derive_builder::Builder;
 use reqwest::header::{HeaderMap, CONTENT_TYPE, USER_AGENT};
 use reqwest::Client;
 use serde::de::DeserializeOwned;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::time::{SystemTime, UNIX_EPOCH};
 use uuid::Uuid;
-use serde_json::{Map, Value};
 use crate::common::HttpMethod;
-use crate::constant::{ACCEPT, AUTHORIZATION, WECHAT_HOST};
+use crate::constant::{ACCEPT, AUTHORIZATION, MCH_HOST};
 use crate::pay::config::WechatV3PayConfig;
 use crate::{utils, RPayError, RPayResult};
 use rsa::pkcs8::DecodePrivateKey;
@@ -21,14 +21,14 @@ pub fn get_nonce_str() -> String {
 }
 
 // 获取时间戳
-pub fn get_timestamp() -> i64 {
-    let start = SystemTime::now();
-    let since_the_epoch = start
-        .duration_since(UNIX_EPOCH)
-        .expect("Time went backwards");
-    let ms = since_the_epoch.as_secs() as i64 * 1000i64
-        + (since_the_epoch.subsec_nanos() as f64 / 1_000_000.0) as i64;
-    ms
+pub fn get_timestamp() -> RPayResult<i64> {
+    match SystemTime::now().duration_since(UNIX_EPOCH) {
+        Ok(d) =>  {
+            let time = d .as_secs() as i64 * 1000i64 + (d.subsec_nanos() as f64 / 1_000_000.0) as i64;
+            Ok(time)
+        },
+        Err(err) => Err(RPayError::ErrorWithMsg(format!("时间获取失败{}", err.to_string())))
+    }
 }
 
 // 随机订单号
@@ -37,6 +37,7 @@ pub fn random_trade_no() -> String {
 }
 
 /// base64解码
+#[allow(unused)]
 pub fn base64_encode<S>(content: S) -> String
 where
     S: AsRef<[u8]>,
@@ -45,6 +46,7 @@ where
 }
 
 /// base64编码
+#[allow(unused)]
 pub fn base64_decode<S>(content: S) -> Result<Vec<u8>, DecodeError>
 where
     S: AsRef<[u8]>,
@@ -53,9 +55,9 @@ where
 }
 
 /// 加密信息
+#[allow(unused)]
 pub fn sha256_sign(private_key: String, content: String) -> Result<String, RPayError> {
     println!("sha256_sign => private_key, {}, content: {}", private_key, content);
-    println!("fx>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     match RsaPrivateKey::from_pkcs8_pem(&private_key) {
         Ok(psk) => {
             let hasher = rsa::sha2::Sha256::new()
@@ -72,15 +74,16 @@ pub fn sha256_sign(private_key: String, content: String) -> Result<String, RPayE
 }
 
  /// 创建签名信息
+ #[allow(unused)]
  pub fn rsa_sign(content: String, private_key: String) -> RPayResult<String> {
     Ok(utils::sha256_sign(private_key, content)?)
 }
 
 /// 构建请求
-pub async fn build_request<T: DeserializeOwned>(wechat_sdk: WechatV3PayConfig, method: HttpMethod, url: &str, body: String) -> RPayResult<T> {
-        let headers = utils::build_header(&wechat_sdk,method.clone(), url, body.clone())?;
+pub async fn build_pay_request<T: DeserializeOwned>(wechat_sdk: WechatV3PayConfig, method: HttpMethod, url: &str, body: String) -> RPayResult<T> {
+        let headers = build_header(&wechat_sdk,method.clone(), url, body.clone())?;
         let client = Client::new();
-        let url = format!("{}{}", WECHAT_HOST, url);
+        let url = format!("{}{}", MCH_HOST, url);
         let builder = match method {
             HttpMethod::GET => client.get(url),
             HttpMethod::POST => client.post(url),
@@ -141,4 +144,46 @@ pub fn build_header(
         Err(err) => return Err(RPayError::ErrorWithMsg(err.to_string())),
     }
     Ok(headers)
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Builder)]
+#[builder(pattern = "mutable")]
+pub struct Request {
+    #[builder(setter(into))]
+    pub url: String,
+    #[builder(default,setter(into))]
+    #[serde(skip)]
+    pub headers: Option<HeaderMap>,
+    #[builder(default,setter(into))]
+    pub body: Option<String>,
+    #[builder(default,setter(into))]
+    #[serde(skip)]
+    method: HttpMethod
+}
+
+impl Request  {
+    /// 构建请求
+pub async fn send<T: DeserializeOwned>(&self) -> RPayResult<T> {
+    let client = Client::new();
+    let mut builder = match self.method {
+        HttpMethod::GET => client.get(&self.url),
+        HttpMethod::POST => client.post(&self.url),
+        HttpMethod::PUT => client.put(&self.url),
+        HttpMethod::DELETE => client.delete(&self.url),
+        HttpMethod::PATCH => client.patch(&self.url),
+    };
+    if let Some(headers) = &self.headers {
+        builder = builder.headers(headers.clone())
+    }
+    if let Some(body) = &self.body {
+        builder = builder.body(body.to_string())
+    }
+    builder
+        .send()
+        .await?
+        .json::<T>()
+        .await
+        .map(Ok)?
+}
+
 }

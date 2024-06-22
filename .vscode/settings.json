@@ -2,11 +2,16 @@
     "cSpell.words": [
         "ciphertext",
         "dotenvy",
+        "errmsg",
         "Hmac",
         "jsapi",
+        "miniprogram",
+        "pagepath",
         "reqwest",
         "rpay",
         "thiserror",
+        "tmpl",
+        "touser",
         "Wechat"
     ]
 }

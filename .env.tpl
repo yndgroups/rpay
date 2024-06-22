@@ -1,3 +1,9 @@
+# 用户的openid
+WECHAT_OPEN_ID=""
+
+# 小程序access_token
+WECHAT_ACCESS_TOKEN=""
+
 # 微信公众号或小程序id
 WECHAT_APP_ID=""
 # 秘钥
