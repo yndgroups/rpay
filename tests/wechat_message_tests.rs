@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod tests {
-    use std::collections::HashMap;
+    use std::{collections::HashMap, fmt::Debug};
 
     use dotenvy::dotenv;
     use rpay::{
-        message::{DataItem, MessageBuilder}, pay::config::{WechatV3PayConfig, WechatV3PayConfigBuilder}, RPayResult
+        message::{CustomerServiceBuilder, DataItem, Link, MessageBuilder, Miniprogrampage, MsgType, Text}, pay::config::{WechatV3PayConfig, WechatV3PayConfigBuilder}, RPayResult
     };
 
     // 获取用的的openid
@@ -20,6 +20,67 @@ mod tests {
         let openid = std::env::var("WECHAT_ACCESS_TOKEN").expect("WECHAT_ACCESS_TOKEN not found");
         return openid;
     }
+
+    /// 测试 - 发送客服 - 卡片消息
+    #[tokio::test]
+    async fn test_kf_send_link_msg() -> RPayResult<()> {
+       let resp =  CustomerServiceBuilder::default()
+        .access_token(get_access_token())
+        .touser(get_oepn_id())
+        .msg_type(MsgType::Link)
+        .link(Some(Link{
+            title: Some("新订单来了".to_string()),
+             description: Some("五香辣椒248g两包<br/>麻辣498一包".to_string()),
+             url: Some("https://www.baidu.com".to_string()),
+             thumb_url: Some("https://www.baidu.com".to_string()),
+        }))
+        .build()
+        .unwrap()
+        .send()
+        .await?;
+        println!("resp => {:?}", resp);
+        Ok(())
+    }
+
+      /// 测试 - 发送客服 - 卡片消息
+      #[tokio::test]
+      async fn test_kf_card_send() -> RPayResult<()> {
+         let resp =  CustomerServiceBuilder::default()
+          .access_token(get_access_token())
+          .touser(get_oepn_id())
+          .msg_type(MsgType::Miniprogrampage)
+          .miniprogrampage(Some(Miniprogrampage{
+            title: Some("测试玩一把".to_string()),
+             pagepath: Some("pages/index/index".to_string()),
+             thumb_media_id: None,
+          }))
+          .build()
+          .unwrap()
+          .send()
+          .await?;
+          println!("resp => {:?}", resp);
+          Ok(())
+      }
+  
+
+    /// 测试 - 发送客服 - 文本消息
+    #[tokio::test]
+    async fn test_kf_text_send() -> RPayResult<()> {
+       let resp =  CustomerServiceBuilder::default()
+        .access_token(get_access_token())
+        .touser(get_oepn_id())
+        .msg_type(MsgType::Text)
+        .text(Some(Text {
+            content: "我是后台接口主动发起的信息，王先生起来接单了，以后就用这个给你推送订单信息哈".to_string(),
+        }))
+        .build()
+        .unwrap()
+        .send()
+        .await?;
+        println!("resp => {:?}", resp);
+        Ok(())
+    }
+
 
     // sdk公共参数
     #[allow(unused)]
@@ -97,25 +158,25 @@ mod tests {
         data.insert(
             "thing1".to_string(),
             DataItem {
-                value: "商品名称".to_string(),
+                value: "大洋芋".to_string(), // 商品名称
             },
         );
         data.insert(
             "amount2".to_string(),
             DataItem {
-                value: "商品金额".to_string(),
+                value: "18.00".to_string(), // 商品金额
             },
         );
         data.insert(
             "number3".to_string(),
             DataItem {
-                value: "商品数量".to_string(),
+                value: "1".to_string(), // 商品数量
             },
         );
         data.insert(
             "time4".to_string(),
             DataItem {
-                value: "下单时间格式必须正确(2024-06-21 14:16:33)".to_string(), 
+                value: "2024-06-21 14:16:33".to_string(), // 下单时间格式必须正确(2024-06-21 14:16:33)
             },
         );
         let resp = MessageBuilder::default()
@@ -123,6 +184,7 @@ mod tests {
             .touser(get_oepn_id())
             .template_id("rc-r-FZ6gwiq2tvkWwJeFckWRkU-RmReKyeFfkfFQLs")
             .data(data)
+            .page("pages/order/index".to_string())
             .build()?
             .send().await?;
         println!("resp => {:?}", resp);

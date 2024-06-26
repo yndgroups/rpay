@@ -6,6 +6,7 @@
         "Hmac",
         "jsapi",
         "miniprogram",
+        "Miniprogrampage",
         "pagepath",
         "reqwest",
         "rpay",

@@ -3,6 +3,7 @@ mod tests {
 
     use dotenvy::dotenv;
     use rpay::{
+        auth::access_token::AccessTokenBuilder,
         pay::config::{WechatV3PayConfig, WechatV3PayConfigBuilder},
         RPayResult,
     };
@@ -28,5 +29,19 @@ mod tests {
             .notify_url(notify_url)
             .build()?;
         Ok(sdk)
+    }
+
+    /// 获取access_token,将其保存配置文，WECHAT_ACCESS_TOKEN 注意有效期2小时，不要频繁调用
+    #[tokio::test]
+    async fn test_get_access_token() -> RPayResult<()> {
+        let sdk = get_sdk()?;
+        let resp = AccessTokenBuilder::default()
+            .app_id(sdk.app_id)
+            .secret(sdk.secret)
+            .build()?
+            .request()
+            .await?;
+        println!("resp => {:?}", resp);
+        Ok(())
     }
 }

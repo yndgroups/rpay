@@ -92,7 +92,8 @@ impl Message {
     pub async fn send(&mut self) -> RPayResult<Response> {
         let url = format!("https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token={}", self.access_token);
         let json_body = serde_json::to_string(self).unwrap();
-        let resp = Client::new().post(url)
+        let resp = Client::new()
+            .post(url)
             .body(json_body)
             .send()
             .await?
