@@ -2,7 +2,7 @@
 name = "rpay"
 version = "0.1.0"
 authors = ["yangdaqiong <yangdaqiong@126.com>"]
-description = "rust web api"
+description = "rust pay api"
 documentation = "https://www.yndkj.com"
 edition = "2021"
 
