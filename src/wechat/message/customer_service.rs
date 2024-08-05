@@ -8,9 +8,8 @@ use serde::{ Deserialize, Serialize};
 
 miniprogrampage	object	否	小程序卡片，msgtype="miniprogrampage" 时必填
 */
-use crate::{core::{common::Lang}, RPayResult};
+use crate::RPayResult;
 
-use super::Message;
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
 #[builder(pattern = "mutable")]
 pub struct CustomerService {
@@ -54,7 +53,7 @@ impl CustomerService {
         Ok(resp)
     }
 
-    pub async fn get_thumb_media_id(&mut self, text: String) -> RPayResult<Response> {
+    pub async fn get_thumb_media_id(&mut self, _text: String) -> RPayResult<Response> {
         let url = format!("https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={}&type=thumb", self.access_token);
         let resp = Client::new()
             .post(url)

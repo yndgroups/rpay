@@ -1,7 +1,7 @@
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
-use crate::{core::{common::RPayResponse, request::Request}, model::{Amount, Detail, SettleInfo, StoreInfo}, RPayResult};
+use crate::{core::request::Request, model::{Amount, Detail, SettleInfo, StoreInfo}, RPayResult};
 
 use super::config::WechatV3PayConfig;
 
@@ -116,5 +116,3 @@ pub struct H5Response {
     /// 注意：code_url并非固定值，使用时按照URL格式转成二维码即可。
     pub h5_url: Option<String>,
 }
-
-impl RPayResponse for H5Response {}

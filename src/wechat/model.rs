@@ -2,6 +2,17 @@ use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 use std::fmt::{Display, Formatter};
 
+#[derive(Debug)]
+pub struct WechatPay {
+    pub app_id: String,
+    pub mch_id: String,
+    pub private_key: String,
+    pub serial_no: String,
+    pub v3_key: String,
+    pub notify_url: String,
+    pub domain: String,
+}
+
 /// 【订单金额】 订单金额信息
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
 
@@ -47,7 +58,10 @@ pub struct JsapiResult {
 
 impl JsapiResult {
     pub fn get_sign_str(&self) -> String {
-        format!("{}\n{}\n{}\n{}\n", self.app_id, self.time_stamp, self.nonce_str, self.package)
+        format!(
+            "{}\n{}\n{}\n{}\n",
+            self.app_id, self.time_stamp, self.nonce_str, self.package
+        )
     }
 }
 
@@ -64,7 +78,10 @@ pub struct AppResult {
 
 impl AppResult {
     pub fn get_sign_str(&self) -> String {
-        format!("{}\n{}\n{}\n{}\n", self.appid, self.time_stamp, self.nonce_str, self.prepay_id)
+        format!(
+            "{}\n{}\n{}\n{}\n",
+            self.appid, self.time_stamp, self.nonce_str, self.prepay_id
+        )
     }
 }
 
@@ -88,7 +105,7 @@ pub enum PayType {
     /// APP支付又称移动端支付，是商户通过在移动端应用APP中集成开放SDK调起微信支付模块完成支付的模式。
     App,
     /// H5支付【MWEB】H5支付主要是在手机、ipad等移动设备中通过浏览器来唤起微信支付的支付产品。
-    H5
+    H5,
 }
 
 impl Display for PayType {
@@ -146,7 +163,6 @@ pub struct GoodsDetailItem {
     // 【商品单价】 单位为：分。如果商户有优惠，需传输商户优惠后的单价(例如：用户对一笔100元的订单使用了商场发的纸质优惠券100-50，则活动商品的单价应为原单价-50)
     pub unit_price: u64,
 }
-
 
 /// 【结算信息】
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
@@ -213,7 +229,7 @@ pub struct ParseEncrypt {
     pub nonce: String,
     pub associated_data: String,
     pub algorithm: String,
-    pub original_type: String
+    pub original_type: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

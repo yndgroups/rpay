@@ -1,6 +1,6 @@
 use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
-use crate::{core::{common::RPayResponse, request::Request}, model::{Amount, Detail, Payer, SceneInfo, SettleInfo, SignData}, RPayResult};
+use crate::{core::request::Request, model::{Amount, Detail, Payer, SceneInfo, SettleInfo, SignData}, RPayResult};
 use super::config::WechatV3PayConfig;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
@@ -77,5 +77,3 @@ pub struct JsapiResponse {
     ///【签名数据】
     pub sign_data: Option<SignData>,
 }
-
-impl RPayResponse for JsapiResponse {}

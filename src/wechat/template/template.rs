@@ -1,6 +1,6 @@
 use derive_builder::Builder;
 use serde::{ Deserialize, Serialize};
-use serde_json::{json, Value};
+use serde_json::json;
 
 use crate::{core::request::RequestBuilder, RPayResult};
 

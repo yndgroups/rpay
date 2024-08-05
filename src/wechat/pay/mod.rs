@@ -1,3 +1,4 @@
+pub mod wechat;
 pub mod jsapi;
 pub mod h5;
 pub mod app;

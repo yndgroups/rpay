@@ -1,8 +1,4 @@
-use crate::RPayError;
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
-pub trait RPayResponse: DeserializeOwned {}
-pub type RPayResult<T> = std::result::Result<T, RPayError>;
-
+use serde::{ Deserialize, Serialize};
 // 进入小程序查看”的语言类型，支持zh_CN(简体中文)、en_US(英文)、zh_HK(繁体中文)、zh_TW(繁体中文)，默认为zh_CN
 #[derive(Clone, Debug,Copy, Serialize, Deserialize, Default)]
 pub enum Lang {

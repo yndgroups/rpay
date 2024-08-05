@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    core::{common::RPayResponse, request::Request}, RPayResult
+    core::request::Request, RPayResult
 };
 use super::config::WechatV3PayConfig;
 
@@ -186,5 +186,3 @@ pub struct RefundPromotionDetail {
     /// 单品列表
     pub goods_detail: Option<GoodsDetail>,
 }
-
-impl RPayResponse for RefundResponse {}
