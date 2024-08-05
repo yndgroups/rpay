@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["yangdaqiong <yangdaqiong@126.com>"]
 description = "rust pay api"
 documentation = "https://www.yndkj.com"
+license = "MIT"
 edition = "2021"
 
 [dependencies]
