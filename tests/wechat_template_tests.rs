@@ -2,7 +2,7 @@
 mod tests {
 
     use dotenvy::dotenv;
-    use rpay::{pay::config::{WechatV3PayConfig, WechatV3PayConfigBuilder}, template::TemplatesBuilder, RPayResult};
+    use rpay::{pay::config::{WechatV3PayConfig, WechatV3PayConfigBuilder}, template::TemplatesBuilder, RPayError, RPayResult};
 
     #[allow(unused)]
     fn get_oepn_id() -> String {
@@ -47,7 +47,8 @@ mod tests {
     async fn test_get_category() -> RPayResult<()> {
        let resp = TemplatesBuilder::default()
         .access_token(get_access_token())
-        .build()?
+        .build()
+        .map_err(|err|RPayError::ErrorWithMsg(err.to_string()))?
         .get_category().await?;
         println!("resp => {:?}", resp);
         Ok(())
@@ -58,7 +59,8 @@ mod tests {
     async fn test_get_keywords() -> RPayResult<()> {
        let resp = TemplatesBuilder::default()
         .access_token(get_access_token())
-        .build()?
+        .build()
+        .map_err(|err|RPayError::ErrorWithMsg(err.to_string()))?
         .get_pub_template_keywords("818".to_string()).await?;
         println!("resp => {:?}", resp);
         Ok(())

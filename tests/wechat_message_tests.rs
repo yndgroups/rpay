@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod tests {
-    use std::{collections::HashMap, fmt::Debug};
+    use std::collections::HashMap;
 
     use dotenvy::dotenv;
     use rpay::{
-        message::{CustomerServiceBuilder, DataItem, Link, MessageBuilder, Miniprogrampage, MsgType, Text}, pay::config::{WechatV3PayConfig, WechatV3PayConfigBuilder}, RPayResult
+        message::{message::{DataItem, MessageBuilder}, CustomerServiceBuilder, Link, Miniprogrampage, MsgType, Text}, pay::config::{WechatV3PayConfig, WechatV3PayConfigBuilder}, RPayError, RPayResult
     };
 
     // 获取用的的openid
@@ -145,7 +145,7 @@ mod tests {
             .touser(get_oepn_id())
             .template_id("aZHCMNQEVOQjF5SSYuPI_eV0tuBj7R7-UQYuQ9FQWx4")
             .data(data)
-            .build()?
+            .build().map_err(|err|RPayError::ErrorWithMsg(err.to_string()))?
             .send().await?;
         println!("resp => {:?}", resp);
         Ok(())
@@ -185,7 +185,7 @@ mod tests {
             .template_id("rc-r-FZ6gwiq2tvkWwJeFckWRkU-RmReKyeFfkfFQLs")
             .data(data)
             .page("pages/order/index".to_string())
-            .build()?
+            .build().map_err(|err|RPayError::ErrorWithMsg(err.to_string()))?
             .send().await?;
         println!("resp => {:?}", resp);
         Ok(())
@@ -230,7 +230,8 @@ mod tests {
              .touser(get_oepn_id())
              .template_id("rc-r-FZ6gwiq2tvkWwJeFckWRkU-RmReKyeFfkfFQLs")
              .data(data)
-             .build()?
+             .build()
+             .map_err(|err|RPayError::ErrorWithMsg(err.to_string()))?
              .send().await?;
          println!("resp => {:?}", resp);
          Ok(())

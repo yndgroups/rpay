@@ -3,8 +3,7 @@ mod tests {
     use std::collections::HashMap;
 
     use dotenvy::dotenv;
-    use rpay::{
-        auth::access_token::AccessTokenBuilder, message::{DataItem, MessageBuilder}, model::{AmountBuilder, PayType, PayerBuilder}, pay::{
+    use rpay::{model::{AmountBuilder, PayType, PayerBuilder}, pay::{
             app::AppPayBuilder, config::{WechatV3PayConfig, WechatV3PayConfigBuilder}, h5::H5PayBuilder, jsapi::JsApiPayBuilder, native::NativePayBuilder, parse_encrypt::ParseEncryptBuilder, pay_info::PayInfoBuilder
         }, RPayResult
     };
